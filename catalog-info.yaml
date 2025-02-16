@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: exemplo-servico
+  description: Um exemplo de serviço no Backstage
+  annotations:
+    github.com/project-slug: aggosistemas/backstage-catalog
+spec:
+  type: service
+  owner: equipe-dev
+  lifecycle: production
