@@ -7,5 +7,5 @@ metadata:
     github.com/project-slug: aggosistemas/backstage-catalog
 spec:
   type: service
-  owner: equipe-dev
+  owner: default/team
   lifecycle: production
