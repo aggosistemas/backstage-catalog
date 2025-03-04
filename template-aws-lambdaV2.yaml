@@ -7,7 +7,7 @@ metadata:
 
 spec:
   owner: equipe-dev
-  type: service  # <-- Adicione esta linha para corrigir o erro
+  type: service  # Tipo de template, ajustado para 'service'
   parameters:
     - title: Configuração da Lambda
       required:
@@ -38,6 +38,8 @@ spec:
       name: Criando repositório no GitHub
       action: github:repo:create
       input:
-        repoUrl: github.com/${{ parameters.owner }}/${{ parameters.repo }}
+        repoUrl: https://github.com/${{ parameters.owner }}/${{ parameters.repo }}  # Adicionado 'https://'
         description: "Repositório criado pelo Backstage para uma AWS Lambda"
         visibility: public
+      output:
+        repoUrl: ${{ steps['create-repo'].output.remoteUrl }}  # Captura a URL do repositório criado
