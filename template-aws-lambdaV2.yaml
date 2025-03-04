@@ -2,27 +2,32 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: aws-lambda-template
-  title: Criar uma AWS Lambda
-  description: Template para criar um repositório e configurar uma AWS Lambda
-
+  title: AWS Lambda Template
+  description: Template para criar e configurar uma AWS Lambda
 spec:
   owner: equipe-dev
-  type: service  # Tipo de template, ajustado para 'service'
+  type: service
+
   parameters:
     - title: Configuração da Lambda
       required:
+        - name
         - owner
-        - repo
         - runtime
+        - repoUrl
       properties:
+        name:
+          title: Nome da Lambda
+          type: string
+          description: Nome único para a AWS Lambda
         owner:
-          title: Organização ou Usuário no GitHub
+          title: Proprietário
           type: string
-          description: Nome da organização ou usuário dono do repositório
-        repo:
-          title: Nome do Repositório
-          type: string
-          description: Nome do novo repositório a ser criado
+          description: Proprietário da Lambda
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
         runtime:
           title: Runtime da Lambda
           type: string
@@ -32,14 +37,44 @@ spec:
             - python3.11
             - java17
           description: Escolha o runtime para a AWS Lambda
+        repoUrl:
+          title: Localização do Repositório
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
 
   steps:
-    - id: create-repo
-      name: Criando repositório no GitHub
-      action: github:repo:create
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
       input:
-        repoUrl: https://github.com/${{ parameters.owner }}/${{ parameters.repo }}  # Adicionado 'https://'
-        description: "Repositório criado pelo Backstage para uma AWS Lambda"
-        visibility: public
-      output:
-        repoUrl: ${{ steps['create-repo'].output.remoteUrl }}  # Captura a URL do repositório criado
+        url: https://github.com/emmaindal/test-template/tree/main
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+          runtime: ${{ parameters.runtime }}
+
+    - id: publish
+      name: Publicar Repositório
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: Repositório para a AWS Lambda ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+
+    - id: configure-lambda
+      name: Configurar AWS Lambda
+      action: aws:lambda:configure
+      input:
+        repoUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        runtime: ${{ parameters.runtime }}
+        functionName: ${{ parameters.name }}
+
+    - id: register
+      name: Registrar Componente
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
