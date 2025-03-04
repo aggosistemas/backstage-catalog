@@ -6,6 +6,7 @@ metadata:
   description: Template para criar um repositório e configurar uma AWS Lambda
 
 spec:
+  owner: equipe-dev
   type: service  # <-- Adicione esta linha para corrigir o erro
   parameters:
     - title: Configuração da Lambda
