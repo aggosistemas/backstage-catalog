@@ -42,15 +42,6 @@ spec:
               - github.com
 
   steps:
-    # Each step executes an action, in this case one templates files into the working directory.
-    - id: fetch-base
-      name: Fetch Base
-      action: fetch:template
-      input:
-        url: ./content
-        values:
-          name: ${{ parameters.name }}
-
     - id: publish
       name: Publicar Repositório
       action: publish:github  # Ação oficial para criar repositórios no GitHub
