@@ -47,7 +47,7 @@ spec:
       name: Fetch Base
       action: fetch:template-js
       input:
-        url: ./content
+        url: https://github.com/aggosistemas/backstage-catalog/tree/main/templates/content
         values:
           name: ${{ parameters.name }}
 
