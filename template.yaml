@@ -1,0 +1,67 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: aws-lambda-template
+  title: AWS Lambda Template
+  description: Template para criar e configurar uma AWS Lambda
+spec:
+  owner: equipe-dev
+  type: service
+
+  parameters:
+    - title: Configuração da Lambda
+      required:
+        - name
+        - owner
+        - runtime
+        - repoUrl
+      properties:
+        name:
+          title: Nome da Lambda
+          type: string
+          description: Nome único para a AWS Lambda
+        owner:
+          title: Proprietário
+          type: string
+          description: Proprietário da Lambda
+        runtime:
+          title: Runtime da Lambda
+          type: string
+          enum:
+            - nodejs18.x
+            - python3.9
+            - python3.11
+            - java17
+          description: Escolha o runtime para a AWS Lambda
+        repoUrl:
+          title: Localização do Repositório
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+  steps:
+    # Each step executes an action, in this case one templates files into the working directory.
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./content
+        values:
+          name: ${{ parameters.name }}
+
+    - id: publish
+      name: Publicar Repositório
+      action: publish:github  # Ação oficial para criar repositórios no GitHub
+      input:
+        allowedHosts: ['github.com']
+        description: "Repositório criado pelo Backstage para a AWS Lambda ${{ parameters.name }}"
+        repoUrl: ${{ parameters.repoUrl }}
+
+    - id: register
+      name: Registrar Componente
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
