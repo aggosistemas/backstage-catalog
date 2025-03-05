@@ -45,7 +45,7 @@ spec:
     # Each step executes an action, in this case one templates files into the working directory.
     - id: fetch-base
       name: Fetch Base
-      action: fetch:template-js
+      action: fetch:template
       input:
         url: https://github.com/aggosistemas/backstage-catalog/tree/main/templates/content
         values:
