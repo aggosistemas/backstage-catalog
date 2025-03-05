@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: aws-lambda-template-js-github
-  title: AWS Lambda Template JS Teste GIT
+  title: AWS Lambda Template JS
   description: Template para criar e configurar uma AWS Lambda
 spec:
   owner: equipe-dev
