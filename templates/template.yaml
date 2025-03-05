@@ -1,8 +1,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: aws-lambda-template
-  title: AWS Lambda Template
+  name: aws-lambda-template-js-github
+  title: AWS Lambda Template JS Teste GIT
   description: Template para criar e configurar uma AWS Lambda
 spec:
   owner: equipe-dev
@@ -42,6 +42,15 @@ spec:
               - github.com
 
   steps:
+    # Each step executes an action, in this case one templates files into the working directory.
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template-js
+      input:
+        url: ./content
+        values:
+          name: ${{ parameters.name }}
+
     - id: publish
       name: Publicar Repositório
       action: publish:github  # Ação oficial para criar repositórios no GitHub
@@ -49,6 +58,7 @@ spec:
         allowedHosts: ['github.com']
         description: "Repositório criado pelo Backstage para a AWS Lambda ${{ parameters.name }}"
         repoUrl: ${{ parameters.repoUrl }}
+        visibility: public
 
     - id: register
       name: Registrar Componente
